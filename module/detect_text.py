@@ -1,12 +1,10 @@
 # https://pi000.tistory.com/19
 # install tesseract for window https://github.com/UB-Mannheim/tesseract/wiki
 import numpy as np
-from pytesseract import Output
-import pytesseract
 import cv2
 
 from PIL import Image
-
+from google.cloud import vision
 """
 https://cloud.google.com/python/docs/reference/vision/latest
 - project 만들기 billing 설정 건너뛰기
@@ -21,24 +19,10 @@ GOOGLE_APPLICATION_CREDENTIALS: C:/Users/dmsgh/AppData/Local/Google/CustomKey/di
 
 # https://cloud.google.com/python/docs/reference/vision/latest
 
-def image_to_text(image_path, img_path_grey):
-    config = ('kor')
-
-    image = cv2.imread(image_path)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    out = gray.copy()
-    inverse_gray = 255 - out
-
-    cv2.imwrite(img_path_grey, inverse_gray)
-
-    img1 = np.array(Image.open(image_path))
-
-    text = pytesseract.image_to_string(img1, lang='kor')
-    return text
 
 def detect_text(path):
     """Detects text in the file."""
-    from google.cloud import vision
+    
 
     client = vision.ImageAnnotatorClient()
 
@@ -62,8 +46,8 @@ def detect_text(path):
 
     if response.error.message:
         raise Exception(
-            "{}\nFor more info on error messages, check: "
-            "https://cloud.google.com/apis/design/errors".format(response.error.message)
+            f"{response.error.message}\nFor more info on error messages, check: "
+            "https://cloud.google.com/apis/design/errors"
         )
     return texts
 
@@ -86,16 +70,7 @@ if __name__ == '__main__':
             vertices = [
                 f"({vertex.x},{vertex.y})" for vertex in text.bounding_poly.vertices
             ]
-            f.writelines("bounds: {}".format(",".join(vertices)))
-
-    # img_path = 'image/item_1.png'
-    # img_path_grey = 'image/item_1_grey.png'
-    # parsed_text = image_to_text(img_path, img_path_grey)
-    # print(img_path, parsed_text)
-
-    # 사용 가능한 언어 출력
-    # langs = pytesseract.get_languages(config='')
-    # print(langs)
+            f.writelines(f"bounds: {','.join(vertices)}")
 
 
 """

@@ -9,10 +9,10 @@ DOWN_RIGHT = "ref_image/down_right.png"
 
 class ImageManager:
     image = None
-    def __init__(self, image_path, image=None):
-        if image:
+    def __init__(self, image_path="", image=None):
+        if image is not None:
             self.image = image
-            return;
+            return
         if not image_path:
             raise Exception("유효한 경로가 아닙니다")
 
