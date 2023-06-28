@@ -2,11 +2,6 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-UP_LEFT = "ref_image/up_left.png"
-DOWN_LEFT = "ref_image/down_left.png"
-UP_RIGHT = "ref_image/up_right.png"
-DOWN_RIGHT = "ref_image/down_right.png"
-
 class ImageManager:
     """ 이미지 처리기 """
 
@@ -22,7 +17,14 @@ class ImageManager:
         # cv2.IMREAD_GRAYSCALE 이미지를 Grayscale로 읽어 들입니다. 실제 이미지 처리시 중간단계로 많이 사용합니다.
         # cv2.IMREAD_UNCHANGED 이미지파일을 alpha channel까지 포함하여 읽어 들입니다.
 
+    def get_image(self):
+        return self.image.copy()
+
+    def show_shape(self):
+        print(np.shape(self.image))
+
     def save_image(self, path):
+        
         cv2.imwrite(path, self.image)
 
     def show_contour(self):
@@ -50,19 +52,20 @@ class ImageManager:
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-    def show_image(self):
-        cv2.imshow('image', self.image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
+    def show_image(self, title="Default"):
+        plt.subplot(1,1,1)
+        plt.imshow(self.image)
+        plt.title(title)
+        plt.tight_layout()
+        plt.show()
+        
     def make_gray_image(self):
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
         return ImageManager(image=gray)
 
-    def make_canny_image(self):
+    def make_canny_image(self, min=80, max=150):
         image = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
-        # Apply Canny edge detection
-        edges = cv2.Canny(image, 100, 200)  # Adjust the threshold values as needed
+        edges = cv2.Canny(image, min, max)  # Adjust the threshold values as needed
 
         return ImageManager(image=edges)
 
@@ -70,16 +73,17 @@ class ImageManager:
         new_image = self.image.copy()
         top_left = list(rectangle.get_left_top())
         bottom_right = list(rectangle.get_right_bottom())
-        cv2.rectangle(new_image, top_left, bottom_right, (0, 0, 255), 2)
+        cv2.rectangle(new_image, top_left, bottom_right, (0, 255, 100), 2)
 
         return ImageManager(image=new_image)
 
     def image_finder(self, img_to_find, method_name='cv2.TM_SQDIFF_NORMED'):
-        image = self.image
-        template = cv2.imread(img_to_find)
+        image = self.image.copy()
+        image_draw = self.image.copy()
+        template = img_to_find.get_image()
 
         template_height, template_width = template.shape[:2]
-        img_draw = image.copy()
+        
         method = eval(method_name)
         # 템플릿 매칭   ---①
         res = cv2.matchTemplate(image, template, method)
@@ -96,21 +100,22 @@ class ImageManager:
 
         # 매칭 좌표 구해서 사각형 표시   ---④
         bottom_right = (top_left[0] + template_width, top_left[1] + template_height)
-        cv2.rectangle(img_draw, top_left, bottom_right, (0, 0, 255), 2)
+        cv2.rectangle(image_draw, top_left, bottom_right, (0, 0, 255), 2)
+        
         # 매칭 포인트 표시 ---⑤
-        cv2.putText(img_draw, str(match_val), top_left, \
+        cv2.putText(image_draw, str(match_val), top_left, \
                     cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 1, cv2.LINE_AA)
 
-        return ImageManager(image=img_draw), top_left, template_height, template_width
+        return ImageManager(image=image_draw), top_left, template_height, template_width
 
     def crop_imge(self, x, y, w, h):
         image = self.image
         crop_img = image[y:y + h, x:x + w]
         return ImageManager(image=crop_img)
 
-    def method_checker(self, image_to_find=UP_LEFT):
+    def method_checker(self, image_to_find):
         image = self.image.copy()
-        template = cv2.imread(image_to_find)
+        template = image_to_find.get_image()
         th, tw = template.shape[:2]
         cv2.imshow('template', template)
 

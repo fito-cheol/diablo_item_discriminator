@@ -1,4 +1,5 @@
 from module.image_helper import ImageManager
+from module.coordinate import Coordinate, Rectangle
 
 FULL_SCREEN = "image/FullScreen.png"
 
@@ -7,47 +8,49 @@ SCREEN_LEGENDARY = "image/screen_legendary.png"
 SCREEN_RARE = "image/screen_rare.png"
 SCREEN_UNIQUE = "image/screen_unique.png"
 
-def mark_4_corner(image_path):
-    
-    path1 = "result/result1.png"
-    path2 = "result/result2.png"
-    path3 = "result/result3.png"
-    path4 = "result/result4.png"
 
-    UP_LEFT = "ref_image/up_left.png"
-    DOWN_LEFT = "ref_image/down_left.png"
-    UP_RIGHT = "ref_image/up_right.png"
-    DOWN_RIGHT = "ref_image/down_right.png"
+UP_LEFT = ImageManager("ref_image/up_left.png")
+DOWN_LEFT = ImageManager("ref_image/down_left.png")
+UP_RIGHT = ImageManager("ref_image/up_right.png")
+DOWN_RIGHT = ImageManager("ref_image/down_right.png")
 
-    image_manager = ImageManager(image_path)
-    image_manager, *_ = image_manager.image_finder(UP_LEFT)
-    image_manager.save_image(path1)
 
-    image_manager, *_ = image_manager.image_finder(DOWN_LEFT)
-    image_manager.save_image(path2)
+def mark_top_bottom(image_path):
+    image_manager = ImageManager(image_path=image_path)
+    image_up = ImageManager(image_path='ref_image\legend_boundary_up.png')
+    image_down = ImageManager(image_path='ref_image\legend_boundary_down.png')
+    image_manager, top_left, template_height, template_width = image_manager.image_finder(image_up)
+    coordinate1 = Coordinate(top_left[0], top_left[1])
+    coordinate2 = Coordinate(top_left[0] + template_width, top_left[1])
 
-    image_manager, *_ = image_manager.image_finder(UP_RIGHT)
-    image_manager.save_image(path3)
+    image_manager, top_left, template_height, template_width = image_manager.image_finder(image_down)
+    coordinate3 = Coordinate(top_left[0], top_left[1] + template_height)
+    coordinate4 = Coordinate(top_left[0] + template_width, top_left[1] + template_height)
+    rectangle = Rectangle(coordinate1, coordinate2, coordinate3, coordinate4)
 
-    image_manager, *_ = image_manager.image_finder(DOWN_RIGHT)
-    image_manager.save_image(path4)
+    image_manager.show_image()
+    image_manager.draw_rect(rectangle).show_image()
+
+
 
 if __name__ == '__main__':
-    mark_4_corner(FULL_SCREEN)
+    # mark_4_corner(FULL_SCREEN)
+    # mark_top_bottom(FULL_SCREEN)
+    # mark_top_bottom(SCREEN_COMPARE)
+    # mark_top_bottom(SCREEN_LEGENDARY)
+    # mark_top_bottom(SCREEN_RARE)
+    mark_top_bottom(SCREEN_UNIQUE)
+    
+
+
+
 
     
-    # image_with_rect = ItemFinder().mark_item_box(FULL_SCREEN)
-    # show_image(image_with_rect)
-    #
-    # image_with_rect = ItemFinder().mark_item_box(SCREEN_COMPARE)
-    # show_image(image_with_rect)
-    # image_with_rect = ItemFinder().mark_item_box(SCREEN_LEGENDARY)
-    # show_image(image_with_rect)
-    # image_with_rect = ItemFinder().mark_item_box(SCREEN_RARE)
-    # show_image(image_with_rect)
-    # image_with_rect = ItemFinder().mark_item_box(SCREEN_UNIQUE)
-    # show_image(image_with_rect)
 
+
+
+
+    
 
 
 
