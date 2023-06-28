@@ -20,8 +20,6 @@ GOOGLE_APPLICATION_CREDENTIALS: C:/Users/dmsgh/AppData/Local/Google/CustomKey/di
 
 
 # https://cloud.google.com/python/docs/reference/vision/latest
-client_id = "516786094118-5202cp5rtm1birnrg32sit6u5ulln7jm.apps.googleusercontent.com"
-API_KEY="AIzaSyCUQP0hegRcNis7yowkdgtYOhP-Wx80gjw"
 
 def image_to_text(image_path, img_path_grey):
     config = ('kor')
