@@ -53,8 +53,10 @@ class ImageManager:
         cv2.destroyAllWindows()
 
     def show_image(self, title="Default"):
+        blue, green, red = cv2.split(self.image)
+        reversed_image = cv2.merge([red,green,blue])
         plt.subplot(1,1,1)
-        plt.imshow(self.image)
+        plt.imshow(reversed_image)
         plt.title(title)
         plt.tight_layout()
         plt.show()
@@ -77,6 +79,14 @@ class ImageManager:
 
         return ImageManager(image=new_image)
 
+    def crop_imge(self, rectangle):
+        top_left = rectangle.get_left_top()
+        bottom_right = rectangle.get_right_bottom()
+        
+        image = self.image
+        crop_img = image[top_left.y : bottom_right.y, top_left.x : bottom_right.x]
+        return ImageManager(image=crop_img)
+    
     def image_finder(self, img_to_find, method_name='cv2.TM_SQDIFF_NORMED'):
         image = self.image.copy()
         image_draw = self.image.copy()
@@ -108,10 +118,6 @@ class ImageManager:
 
         return ImageManager(image=image_draw), top_left, template_height, template_width
 
-    def crop_imge(self, x, y, w, h):
-        image = self.image
-        crop_img = image[y:y + h, x:x + w]
-        return ImageManager(image=crop_img)
 
     def method_checker(self, image_to_find):
         image = self.image.copy()

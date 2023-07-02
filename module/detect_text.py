@@ -6,6 +6,7 @@ import cv2
 from PIL import Image
 from google.cloud import vision
 """
+pip install google-cloud-vision
 https://cloud.google.com/python/docs/reference/vision/latest
 - project 만들기 billing 설정 건너뛰기
 1. Cloud Vision API 사용
@@ -51,6 +52,9 @@ def detect_text(path):
         )
     return texts
 
+def save_text(texts, path):
+    with open(path, "w+", encoding="utf8") as f:
+        f.writelines(texts[0].description)
 
 if __name__ == '__main__':
 
