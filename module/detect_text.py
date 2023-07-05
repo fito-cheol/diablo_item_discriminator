@@ -23,8 +23,6 @@ GOOGLE_APPLICATION_CREDENTIALS: C:/Users/dmsgh/AppData/Local/Google/CustomKey/di
 
 def detect_text(path):
     """Detects text in the file."""
-    
-
     client = vision.ImageAnnotatorClient()
 
     with open(path, "rb") as image_file:
@@ -34,16 +32,6 @@ def detect_text(path):
 
     response = client.text_detection(image=image)
     texts = response.text_annotations
-    print("Texts:")
-
-    for text in texts:
-        print(f'\n"{text.description}"')
-
-        vertices = [
-            f"({vertex.x},{vertex.y})" for vertex in text.bounding_poly.vertices
-        ]
-
-        print("bounds: {}".format(",".join(vertices)))
 
     if response.error.message:
         raise Exception(

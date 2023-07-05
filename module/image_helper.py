@@ -22,6 +22,7 @@ class ImageManager:
 
     def show_shape(self):
         print(np.shape(self.image))
+        return np.shape(self.image)
 
     def save_image(self, path):
         

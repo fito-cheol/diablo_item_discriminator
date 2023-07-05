@@ -3,7 +3,6 @@ import json
 import re
 
 
-
 with open('data/item.json') as json_file:
     item_dict = json.load(json_file)
     
@@ -28,7 +27,7 @@ class Item:
   
   def __repr__(self) -> str:
     repr_string = ""
-    repr_string += f"{self.power_level or '일반'} {self.quality or ''} {self.equipment} \n"
+    repr_string += f"{self.power_level or '일반'} {self.quality or ''} {self.equipment  or ''} \n"
     repr_string += f"위력: {self.power} \n"
     
     option_string = ""
@@ -106,6 +105,8 @@ class Item:
   
 class Option:
   grade = None
+  text = None
+  search_key = None
   def __init__(self, text, search_key) -> None:
     self.text = text
     self.search_key = search_key
@@ -120,6 +121,12 @@ class Option:
     if self.grade:
       return self.search_key + f", 등급: {self.grade}"  
     return self.text
+  
+  def is_good(self):
+    return self.grade == '상'
+  
+  def is_bad(self):
+    return self.grade == '하'
   
   def set_grade(self):
     if not "[" in self.text or not "]" in self.text:
@@ -143,6 +150,16 @@ class Option:
     else:
       return
     
+class ItemCrieria:
+  equipment = None # 부위
+  power_level = None # 신성 선조
+  quality = None # 등급 
+  power = None # 위력
+  options = [] 
+  required_level = None # 요구 레벨
+  character_class = None # 직업
+  
+
 
 def get_numbers_from_string(string):
     numbers = re.findall(r'\d+\.\d+|\d+', string)
@@ -157,7 +174,7 @@ def get_similar_text_in_list(text, string_list):
   return None    
 
 if __name__ == "__main__":
-  with open('data/item_text_sample.txt', 'r', encoding='utf-8') as f:
+  with open('data/item_text_sample_2.txt', 'r', encoding='utf-8') as f:
     item_text_sample = f.readlines()
   item_instance = Item(item_text_sample)
   print(item_instance)
